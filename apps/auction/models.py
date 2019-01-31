@@ -1,7 +1,10 @@
 from django.db import models
+from django.core.validators import MinValueValidator
+from django.contrib.auth.models import User
 
 
 class Auction(models.Model):
+    """Model to manage auctions data"""
 
     OPT_STATUS_OPEN = "open"
     OPT_STATUS_CLOSED = "closed"
@@ -12,7 +15,8 @@ class Auction(models.Model):
     )
 
     amount = models.FloatField(
-        default=0,
+        validators=[MinValueValidator(1)],
+        default=1,
         verbose_name="Amount"
     )
 
@@ -33,20 +37,26 @@ class Auction(models.Model):
 
 
 class Bid (models.Model):
+    """Model to manage user bid data. Each bid is related to an auction"""
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE,)
+    auction = models.ForeignKey(Auction, on_delete=models.CASCADE)
 
     amount = models.FloatField(
-        verbose_name="",
-        help_text=""
+        validators=[MinValueValidator(1)],
+        default=1,
+        verbose_name="Bid amount"
     )
 
-    discount_rate = models.IntegerField(
-        verbose_name="",
-        help_text=""
+    discount_rate = models.FloatField(
+        verbose_name="Discount Rate",
+        help_text="Criteria for selecting winners bids. If it's lower, it's better"
     )
 
     winner = models.BooleanField(
-        verbose_name="",
-        help_text=""
+        default=False,
+        verbose_name="Winner Bid?",
+        help_text="Is this a winner bid?"
     )
 
     class Meta:
@@ -54,4 +64,4 @@ class Bid (models.Model):
         verbose_name_plural = "Bids"
 
     def __str__(self):
-        return f"ID: {self.id} - Amount: {self.amount}"
+        return f"ID: {self.id} - Amount: {self.amount} - Winner: {self.winner}"
