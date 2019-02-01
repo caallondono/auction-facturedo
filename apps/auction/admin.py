@@ -3,13 +3,13 @@ from apps.auction.models import Auction
 from apps.auction.models import Bid
 
 
-admin.site.register(Auction)
-admin.site.register(Bid)
-
-
 class AuctionAdmin(admin.ModelAdmin):
-    fields = ('id', 'amount', 'status')
+    list_display = ('id', 'amount', 'status')
 
 
 class BidAdmin(admin.ModelAdmin):
-    fields = ('id', 'auction', 'user', 'amount', 'discount_rate', 'winner')
+    list_display = ('id', 'auction', 'user', 'amount', 'discount_rate', 'winner')
+
+
+admin.site.register(Auction, AuctionAdmin)
+admin.site.register(Bid, BidAdmin)

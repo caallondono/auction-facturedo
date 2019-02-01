@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
@@ -8,6 +9,8 @@ class Auction(models.Model):
 
     OPT_STATUS_OPEN = "open"
     OPT_STATUS_CLOSED = "closed"
+
+    LIST_OPT_STATUS = [OPT_STATUS_OPEN, OPT_STATUS_CLOSED]
 
     CHOICES_STATUS =(
         (OPT_STATUS_OPEN, "Open Status"),
@@ -29,17 +32,18 @@ class Auction(models.Model):
     )
 
     class Meta:
+        ordering = ['id']
         verbose_name = "Auction"
         verbose_name_plural = "Auctions"
 
     def __str__(self):
-        return f"ID: {self.id} - Amount: {self.amount}"
+        return f"Id: {self.id} - Amount: {self.amount}"
 
 
 class Bid (models.Model):
     """Model to manage user bid data. Each bid is related to an auction"""
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE,)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     auction = models.ForeignKey(Auction, on_delete=models.CASCADE)
 
     amount = models.FloatField(
@@ -50,7 +54,7 @@ class Bid (models.Model):
 
     discount_rate = models.FloatField(
         verbose_name="Discount Rate",
-        help_text="Criteria for selecting winners bids. If it's lower, it's better"
+        help_text="Criteria for selecting winners bids. If it's lower, it increases the chances"
     )
 
     winner = models.BooleanField(
@@ -60,8 +64,9 @@ class Bid (models.Model):
     )
 
     class Meta:
+        ordering = ['id']
         verbose_name = "Bid"
         verbose_name_plural = "Bids"
 
     def __str__(self):
-        return f"ID: {self.id} - Amount: {self.amount} - Winner: {self.winner}"
+        return f"Auction: [{self.auction.id}][{self.auction.amount}] - Amount: {self.amount} - Winner: {self.winner}"
