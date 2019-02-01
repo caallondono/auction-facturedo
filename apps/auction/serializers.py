@@ -5,7 +5,7 @@ from apps.auction.models import Auction, Bid
 
 
 class AuctionSerializer(serializers.HyperlinkedModelSerializer):
-    """"""
+    """Serializer for Auction model"""
 
     def validate(self, attrs):
 
@@ -24,7 +24,7 @@ class AuctionSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class BidSerializer(serializers.HyperlinkedModelSerializer):
-    """"""
+    """Serializer for Bid model"""
 
     username = serializers.ReadOnlyField(source='user.username')
     user = serializers.PrimaryKeyRelatedField(write_only=True, queryset=User.objects.all(), required=True)
@@ -37,6 +37,9 @@ class BidSerializer(serializers.HyperlinkedModelSerializer):
         if len(result) > 0 and not attrs.get('id'):
             raise serializers.ValidationError(
                 f"The user '{attrs.get('user', {}).username}' has an active bid for this auction")
+
+        # TODO: Winner field must be generated automatically
+
         return attrs
 
     class Meta:

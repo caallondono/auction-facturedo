@@ -17,7 +17,7 @@ class AuctionModelTest(TestCase):
 
     def test_str_return_correctly(self):
         """Verifies if __str__ method works correctly"""
-        expected = f"ID: {self.auction_data.get('id')} - Amount: {self.auction_data.get('amount')}"
+        expected = f"Id: {self.auction_data.get('id')} - Amount: {self.auction_data.get('amount')}"
         self.assertEqual(str(self.auction_test), expected)
 
     def test_status_is_open_in_creation(self):
@@ -41,19 +41,19 @@ class BidModelTest(TestCase):
             "id": 1,
             "amount": 100
         }
-        auction_test = Auction(**auction_data)
+        self.auction_test = Auction(**auction_data)
 
         self.fake_data = {
             "id": 1,
             "user": user_test,
-            "auction": auction_test,
+            "auction": self.auction_test,
             "amount": 100
         }
         self.bid_test = Bid(**self.fake_data)
 
     def test_str_return_correctly(self):
         """Verifies if __str__ method works correctly"""
-        expected = f"ID: {self.bid_test.id} - Amount: {self.bid_test.amount} - Winner: {self.bid_test.winner}"
+        expected = f"Auction: [{self.auction_test.id}][{self.auction_test.amount}] - Amount: {self.bid_test.amount} - Winner: {self.bid_test.winner}"
         self.assertEqual(str(self.bid_test), expected)
 
     def test_winner_is_false_in_creation(self):
