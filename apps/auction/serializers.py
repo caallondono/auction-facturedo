@@ -26,7 +26,9 @@ class AuctionSerializer(serializers.HyperlinkedModelSerializer):
 class BidSerializer(serializers.HyperlinkedModelSerializer):
     """"""
 
-    user = serializers.PrimaryKeyRelatedField(read_only=True, source='user.username')
+    username = serializers.ReadOnlyField(source='user.username')
+    user = serializers.PrimaryKeyRelatedField(write_only=True, queryset=User.objects.all(), required=True)
+    auction = serializers.PrimaryKeyRelatedField(write_only=True, queryset=Auction.objects.all(), required=True)
 
     def validate(self, attrs):
 
@@ -39,4 +41,4 @@ class BidSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Bid
-        fields = ('id', 'user', 'amount', 'discount_rate', 'winner')
+        fields = ('id', 'user', 'username', 'amount', 'auction', 'discount_rate', 'winner')
