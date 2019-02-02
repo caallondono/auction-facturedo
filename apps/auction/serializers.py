@@ -28,6 +28,9 @@ class BidSerializer(serializers.HyperlinkedModelSerializer):
 
     username = serializers.ReadOnlyField(source='user.username')
     user = serializers.PrimaryKeyRelatedField(write_only=True, queryset=User.objects.all(), required=True)
+
+    auction_id = serializers.ReadOnlyField(source='auction.id')
+    auction_amount = serializers.ReadOnlyField(source='auction.amount')
     auction = serializers.PrimaryKeyRelatedField(write_only=True, queryset=Auction.objects.all(), required=True)
 
     def validate(self, attrs):
@@ -38,10 +41,11 @@ class BidSerializer(serializers.HyperlinkedModelSerializer):
             raise serializers.ValidationError(
                 f"The user '{attrs.get('user', {}).username}' has an active bid for this auction")
 
-        # TODO: Winner field must be generated automatically
+        if attrs.get('winner') and attrs.get('winner') is True:
+            raise serializers.ValidationError("Winner field cannot be set in this request")
 
         return attrs
 
     class Meta:
         model = Bid
-        fields = ('id', 'user', 'username', 'amount', 'auction', 'discount_rate', 'winner')
+        fields = ('id', 'user', 'username', 'auction_id', 'auction_amount', 'amount', 'auction', 'discount_rate', 'winner')

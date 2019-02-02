@@ -18,7 +18,6 @@ class Auction(models.Model):
 
     amount = models.FloatField(
         validators=[MinValueValidator(1)],
-        default=1,
         verbose_name="Amount"
     )
 
@@ -47,7 +46,6 @@ class Bid (models.Model):
 
     amount = models.FloatField(
         validators=[MinValueValidator(1)],
-        default=1,
         verbose_name="Bid amount"
     )
 
@@ -68,4 +66,4 @@ class Bid (models.Model):
         verbose_name_plural = "Bids"
 
     def __str__(self):
-        return f"Auction: [{self.auction.id}][{self.auction.amount}] - Amount: {self.amount} - Winner: {self.winner}"
+        return f"Auction: {self.auction.amount} - Amount: {self.amount} - DR: {self.discount_rate} - Winner: {self.winner}"
