@@ -70,16 +70,12 @@ def auction_status_update(request, pk):
             if request.data.get('status') == Auction.OPT_STATUS_CLOSED:
                 # Selects bids winners
                 selected_bids = Bid.objects.filter(auction_id=pk).order_by('discount_rate')
-                print(f"selected_bids: {selected_bids}")
 
                 total_bids = 0
                 for selected_bid in selected_bids:
                     selected_bid.winner = True
                     selected_bid.save()
                     total_bids += selected_bid.amount
-
-                    print(f"total_bids: {total_bids}")
-                    print(f"auction.amount: {auction.amount}")
 
                     if total_bids >= auction.amount:
                         break

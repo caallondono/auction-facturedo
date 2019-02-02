@@ -53,7 +53,7 @@ class BidModelTest(TestCase):
 
     def test_str_return_correctly(self):
         """Verifies if __str__ method works correctly"""
-        expected = f"Auction: [{self.auction_test.id}][{self.auction_test.amount}] - Amount: {self.bid_test.amount} - Winner: {self.bid_test.winner}"
+        expected = f"Auction: {self.auction_test.amount} - Amount: {self.bid_test.amount} - DR: {self.bid_test.discount_rate} - Winner: {self.bid_test.winner}"
         self.assertEqual(str(self.bid_test), expected)
 
     def test_winner_is_false_in_creation(self):

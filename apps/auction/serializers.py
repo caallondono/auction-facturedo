@@ -8,7 +8,6 @@ class AuctionSerializer(serializers.HyperlinkedModelSerializer):
     """Serializer for Auction model"""
 
     def validate(self, attrs):
-
         # Validates if an auction is created with 'closed' status only por PUT method
         if (
                 self.context.get('request') and
