@@ -117,7 +117,7 @@ class AuctionChangeStatusTest(TestCase):
         """Verify response when total amount is set to 0 or lower than auction amount when is not calculated in query"""
 
         mock_aggregate = MagicMock()
-        mock_aggregate.aggregate.return_value = {"amount__sum": 20}
+        mock_aggregate.aggregate.return_value = {}
         mock_bid_filter.return_value = mock_aggregate
 
         data = {"status": "closed"}
@@ -164,6 +164,8 @@ class AuctionChangeStatusTest(TestCase):
 class BidListCreateTest(TestCase):
     """Unit tests for listing and creating bids using endpoints"""
 
+    endpoint = "/auction/bid/"
+
     def setUp(self):
         # User for testing
         self.user = User(username="user_test1")
@@ -184,24 +186,47 @@ class BidListCreateTest(TestCase):
 
     def test_methods_not_allowed(self):
         """Verify error response when client uses methods not allowed"""
-        pass
+        response = self.client.put(f"{self.endpoint}", {}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def test_getting_all_bids(self):
         """Verify response when client requests for bids"""
-        pass
+        response = self.client.get(self.endpoint, {}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
 
     def test_check_creation_error_when_id(self):
         """Verify error when client tries to create a bid with id"""
-        pass
+        data = {"id": 1}
+        response = self.client.post(self.endpoint, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data.get('non_field_errors')[0], 'Use PUT method for updating')
 
     def test_check_creation_error_when_status_closed(self):
         """Verify error when client tries to create a bid with auction status closed"""
-        pass
+        self.auction1.status = Auction.OPT_STATUS_CLOSED
+        self.auction1.save()
+
+        data = {"user": self.user.id, "amount": 20, "auction": self.auction1.id, "discount_rate": 1.1}
+        response = self.client.post(self.endpoint, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data.get('non_field_errors')[0], 'This auction is close')
+
+        self.auction1.status = Auction.OPT_STATUS_OPEN
+        self.auction1.save()
 
     def test_when_creation_serializer_validation_is_not_correct(self):
         """Verify error when serializer validation raise an error during creation"""
-        pass
+        data = {"user": self.user.id, "amount": 20, "auction": self.auction1.id}
+        response = self.client.post(self.endpoint, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_when_creation_request_is_correct(self):
         """Verify correct creation"""
-        pass
+
+        user2 = User(username="user_test2")
+        user2.save()
+
+        data = {"user": user2.id, "amount": 20, "auction": self.auction1.id, "discount_rate": 1.1}
+        response = self.client.post(self.endpoint, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
