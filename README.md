@@ -10,6 +10,13 @@ Create virtual environment and use requirements.txt for installing dependencies:
 pip install -r requirements.txt
 ```
 
+Run development server:
+
+```
+python manage.py runserver 0.0.0.0:8000
+```
+
+
 ## API Docs
 
 ### 1. Test users:
